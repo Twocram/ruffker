@@ -1,0 +1,63 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider          = "postgresql"
+  url               = env("DATABASE_URL")
+  shadowDatabaseUrl = env("SHADOW_DATABASE_URL")
+}
+
+model User {
+  id          String @id @default(uuid())
+  login       String
+  telegram_id String
+  spins       Int
+  tickets     Int
+
+  ruffker_id String
+
+  ruffker Ruffker? @relation(fields: [ruffker_id], references: [id])
+}
+
+model Status {
+  id    String @id @default(uuid())
+  label String
+
+  ruffker    Ruffker? @relation(fields: [ruffker_id], references: [id])
+  ruffker_id String
+}
+
+model Image {
+  id    String @id @default(uuid())
+  label String
+  path  String
+
+  ruffker_id String
+  ruffker    Ruffker? @relation(fields: [ruffker_id], references: [id])
+}
+
+model Tag {
+  id       String @id @default(uuid())
+  label    String
+  iconName String
+
+  ruffker_id String
+  ruffker    Ruffker? @relation(fields: [ruffker_id], references: [id])
+}
+
+model Ruffker {
+  id             String   @id @default(uuid())
+  name           String
+  additionalInfo String
+  expirationTime DateTime
+  price          Int
+
+  user   User[]
+  image  Image[]
+  status Status[]
+  tag    Tag[]
+}
